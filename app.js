@@ -5,7 +5,9 @@ var d3 = require('d3');
 
 // Port to run application on server 
 app.set('port', 8557);
-app.set("view engine", "ejs");
+var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
+app.engine('handlebars', handlebars.engine);
+app.set("view engine", "handlebars");
 app.use(express.static(__dirname + "/public"));
 
 // Enable crawler routes to be written in their own file 
