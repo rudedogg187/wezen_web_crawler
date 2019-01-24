@@ -1,1 +1,20 @@
-<h1>The Home Page</h1>
+<div class="row">
+  <div class="container col-sm-4 purpleBackground">
+    <h2 class="text-center" style="color:white;">Crawler History</h2>
+  </div>
+  <div class="container col-sm-8">
+    <div class="row col-sm-12">
+      <form class="form-inline">
+        <label for="inputUrl">URL to crawl</label>
+        <input type="text" class="form-control" id="inputUrl">
+        <label for="inputSteps">Steps: </label>
+        <input type="text" id="inputSteps">
+        <select class="custom-select">
+          <option selected>Depth</option>
+          <option>Breadth</option>
+        </select>
+        <button type="button" class="btn btn-light">Crawl</button>
+      </form>
+    </div>
+  </div>
+</div>
