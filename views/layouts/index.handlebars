@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <!-- CSS files -->
+  {{#each css}}
+    <link href="/css/{{this}}" rel="stylesheet">
+  {{/each}}
+  <!-- End CSS files -->
+  <title> 
+    Crawler
+  </title>
+  <meta charset="utf-8">
+  </head> 
+<body>
+  <!-- JS files -->
+  {{#each js}}
+    <script src="/js/{{this}}"></script>
+  {{/each}}
+  <!-- End JS files -->
+  <!-- Nav bar Start -->
+  <div id="nav-main" class="row nav-bar">
+    <span class="nav-logo">
+      Wezen Web Crawler
+    </span>
+    <span class="right nav-account">
+      <span id="login-in-btn" class="btn">
+        Log In
+      </span>
+      <span id="login-in-btn" class="btn">
+        Create Account
+      </span>
+    </span>
+	
+
+  </div>
+
+  <div class="ui blue inverted menu">
+    <h2 class="item">
+    </h2>
+    <div class="right menu">
+      <a class="item">
+        Log In
+      </a>
+      <a class="item">
+        Create Account
+      </a>
+    </div>
+  </div>
+  <!-- End Nav Bar --> 
+   {{{body}}}
+</body>
+
+</html>
