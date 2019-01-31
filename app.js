@@ -6,13 +6,20 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var createError = require('http-errors');
 var path = require('path');
-
+var request = require('request');
+var cheerio = require('cheerio');
+var URL = require('url-parse');
+var bodyParser = require('body-parser');
 // Port to run application on server 
 app.set('port', 8557);
+
 var handlebars = require('express-handlebars').create({defaultLayout: 'main'});
 app.engine('handlebars', handlebars.engine);
 app.set("view engine", "handlebars");
 app.use(express.static(__dirname + "/public"));
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 // Logger for development 
 app.use(logger('dev'));
@@ -21,7 +28,7 @@ app.use(express.urlencoded({extended: false }));
 app.use(cookieParser());
 
 // Enable crawler routes to be written in their own file 
-require('./routes/crawler')(app);
+require('./routes/crawler')(app, request, cheerio, URL, bodyParser);
 require('./routes/indexRoutes')(app);
 require('./routes/seeds')(app);
 
