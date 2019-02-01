@@ -20,6 +20,10 @@ module.exports = (app) => {
 //        "popper.min.js",
 //        "bootstrap.min.js",
         "seed.js"
+        "semantic.min.js",
+        "popper.min.js",
+        "bootstrap.min.js",
+        "crawl.js"
 
       ]
     };
