@@ -13,6 +13,8 @@ module.exports = (app) => {
       js: [
         "jquery-3.3.1.min.js",
         "main.js",
+	"request.js",
+	"ajax.js",
         "d3.v5.min.js",
 //        "semantic.min.js",
 //        "popper.min.js",
