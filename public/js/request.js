@@ -11,7 +11,7 @@ function createAccount() {
 }
 
 
-function logon() {
+function accountLogon() {
   var payload = {
     user: "testie",
     pwrd: "testerson",
@@ -21,12 +21,43 @@ function logon() {
 
 }
 
+function submitSearch() {
+  var url = d3.select("#url-text");
+
+  var steps = d3.select("#steps-int");
+
+  var type = d3.select("#search-type");
+
+  if(validateSearchInput(url, steps, type) == 1) {
+    var payload = {
+      url: url,
+      steps: steps,
+      type: type,
+    }
+
+    //ajax.post("/search", payload, (res) => { console.log(res) });
+
+  } else {
+//need to finish validation
+    console.log("not valid input");
+  }
+
+}
+
+function validateSearchInput(url, steps, type) {
+//need to write validation
+	return 1;
+}
+
+
 
 function main() {
   var loginBtn = d3.select("#login-btn")
-    .on("click", logon);
-
+    .on("click", accountLogon);
 
   var createBtn = d3.select("#create-btn")
-   .on("click", createAccount);
+    .on("click", createAccount);
+
+  var submitBtn = d3.select("#search-submit-btn")
+    .on("click", submitSearch);
 }
