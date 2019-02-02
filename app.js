@@ -30,6 +30,7 @@ app.use(cookieParser());
 // Enable crawler routes to be written in their own file 
 require('./routes/crawler')(app, request, cheerio, URL, bodyParser);
 require('./routes/indexRoutes')(app);
+require('./routes/accounts')(app);
 require('./routes/seeds')(app);
 
 app.use((req, res) => {

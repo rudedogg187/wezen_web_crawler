@@ -1,25 +1,41 @@
-<div class="row">
-  <div class="container col-sm-4 purpleBackground">
-    <h2 class="text-center" style="color:white;">Crawler History</h2>
+<div id="content-div" class="row">
+  <div id="hist-main" class="hist-col">
+    <div id="hist-head"><b>Crawl History</b></div>
   </div>
-  <div class="container col-sm-8">
-    <div class="row col-sm-12">
-      <form class="form-inline">
-        <label for="inputUrl">URL to crawl</label>
-        <input type="text" class="form-control" id="inputUrl">
-        <label for="inputSteps">Steps: </label>
-        <input type="text" id="inputSteps">
-        <select class="custom-select">
-          <option selected>Depth</option>
-          <option>Breadth</option>
-        </select>
-        <button type="button" class="btn btn-light">Crawl</button>
-      </form>
+  <div id="main-col" class="main-col">
+    <div id="search-div">
+      <span>
+        URL to crawl
+      </span>
+      <span>
+        <input id="url-text" type="text"></input>
+      </span>
+      <span>
+        Word
+      </span>
+      <span>
+        <input id="key-word" type="text"></input>
+      </span>
+      <span>
+        Steps
+      </span>
+      <span>
+        <input id="steps-int" type="text"></input>
+      </span>
+      <span>
+<!--needs to be a dropdown -->
+        <input id="search-type" type="text" value="depth"></input>
+      </span>
+      <span>
+        <button id="search-submit-btn">submit</button>
+      </span>
+      <span>
+        <button id="seed-submit-btn">seed</button>
+      </span>
     </div>
-
-    <!-- div to hold tree svg -->
     <div id="tree-canvas">
-    </div>
-    
+  </div>
+
+
   </div>
 </div>

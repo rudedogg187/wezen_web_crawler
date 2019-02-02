@@ -3,6 +3,93 @@
 }
 
 .artboard {
-	fill-opacity: .10;
+  fill-opacity: .10;
 }
 
+
+html, body {
+  font-family: sans-serif;
+  height: 100%;
+  font-size: 14px;
+}
+
+.row {
+  width: 100%;
+}
+
+.right {
+  float: right;
+}
+
+.nav-logo {
+  font-size: 18px;
+  font-style: italic;
+  font-weight: bold;
+}
+
+
+.nav-bar {
+  background-color: blue;
+  color: #ffffff;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.btn {
+  padding: 10px;
+}
+
+.btn:hover {
+  font-weight: bold;
+}
+
+.hist-col {
+  background-color: purple;
+  color: #ffffff;
+  width: 250px;
+  padding: 10px;
+  height: 100%;
+  box-sizing: border-box;
+  float: left;
+}
+
+#content-div {
+  height: 100%;
+}
+
+.main-col {
+  height: 100%;
+  float: right;
+  width: calc(100% - 250px);
+}
+
+#search-div {
+  padding: 10px;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+#steps-int {
+  width: 30px;
+}
+
+#search-type {
+  width: 60px;
+}
+
+#search-type {
+  width: 50px;
+}
+
+#tree-canvas {
+  float: clear;
+}
+
+
+.node {
+  fill: orange;
+  fill-opacity: .25;
+  stroke: black;
+  stroke-width: 1;
+
+}
