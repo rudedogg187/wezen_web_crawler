@@ -17,33 +17,48 @@ function accountLogon() {
     pwrd: "testerson",
   }
 
-  ajax.post("/login", payload, (res) => { console.log(res) });
+  ajax.post("/login", payload, (res) => { 
+    var loginBtn = d3.select("#login-btn")
+
+    loginBtn.html("Log Off");    
+
+    var link = d3.select("#hist-main")
+      .selectAll(".hist-link")
+      .data(res.history);
+
+    link.enter()
+      .append("div")
+      .attr("class", "hist-link")
+      .html( (d) => { return d.url; });
+	
+
+  });
 
 }
 
 function submitSearch() {
   var url = d3.select("#url-text").node().value;
-
+  var word = d3.select("#key-word").node().value;
   var steps = d3.select("#steps-int").node().value;
+  var type = d3.select("#search-type").node().value;
 
-//hardcoded
-var type = "depth";
-  //var type = d3.select("#search-type").node().value;
-
-  if(validateSearchInput(url, steps, type) == 1) {
+  if(validateSearchInput(url, steps) == 1) {
     var payload = {
       url: url,
-      word: "test",
+      word: word,
       steps: steps,
       type: type,
     }
 
-   var endPoint = "/crawl/" + type.toLowerCase();
+    var endPoint = "/crawl/" + type.toLowerCase();
 
-   ajax.post(endPoint, payload, (res) => { console.log(res) });
+    console.log(payload);
+    ajax.post(endPoint, payload, (res) => { 
+      buildTree(res);
+    })
+
 
   } else {
-//need to finish validation
     console.log("not valid input");
   }
 
@@ -57,15 +72,25 @@ var type = "breadth";
   var endPoint = "/seeds/" + type.toLowerCase();
 
   ajax.get(endPoint, (res) => {
-    console.log(res)
+    buildTree(res);
   })
 	
 }
 
 
-function validateSearchInput(url, steps, type) {
+function validateSearchInput(url, steps) {
 //need to write validation
-	return 1;
+  if(!(+steps === parseInt(+steps, 10))) {
+    console.log("bad steps");
+    return 0;
+  }
+  if(+url === parseInt(+url, 10)) {
+    console.log("bad url");
+    return 0;
+  }
+
+
+  return 1;
 }
 
 

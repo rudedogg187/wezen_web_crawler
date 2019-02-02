@@ -69,7 +69,27 @@ html, body {
   background: #ffffff;
 }
 
+#steps-int {
+  width: 30px;
+}
+
+#search-type {
+  width: 60px;
+}
+
+#search-type {
+  width: 50px;
+}
+
 #tree-canvas {
-  background: green;
   float: clear;
+}
+
+
+.node {
+  fill: orange;
+  fill-opacity: .25;
+  stroke: black;
+  stroke-width: 1;
+
 }

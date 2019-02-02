@@ -31,10 +31,39 @@ function addCanvas(cont) {
 
 }
 
+function buildTree(data) {
+	console.log(JSON.stringify(data));
+
+
+		
+
+	var l1Nodes = data[0].children;
+
+	var l1Node = canvas.g.selectAll(".level-one")
+		.data(l1Nodes);
+
+	l1Node.enter()
+		.append("circle")
+		.attr("class", ".level-one node")
+		.attr("r", 10)
+		.attr("cx", (d, i) => {
+			return 20 + i * 75;
+		})
+		.attr("cy", 50)
+		.on("click", (d) => { console.log(data[d]); })
+
+
+
+
+
+	
+	
+
+}
+
 
 function main() {
 	addCanvas("#tree-canvas");
-
 	console.log(canvas);
 
 }
