@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(e) {
   $.ajax({
-    url: '/crawl/depth',
+    url: '/crawl/breadth',
     method: 'POST',
     data: {steps: 5, word: 'This is a test word', url:'https://oregonstate.edu/'},
     dataType: 'json',
