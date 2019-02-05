@@ -18,6 +18,7 @@ const ajax = {
 		req.open("POST", url, true);
 		req.setRequestHeader("Content-Type", "application/json");
 		req.addEventListener("load", function(event) {
+			console.log(req.responseText);
 			res = JSON.parse(req.responseText);
 			console.log(res);
 			callback(res);
