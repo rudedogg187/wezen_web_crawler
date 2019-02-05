@@ -93,3 +93,8 @@ html, body {
   stroke-width: 1;
 
 }
+
+.edge {
+  fill-opacity: 0;
+  stroke: black;
+}

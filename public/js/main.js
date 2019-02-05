@@ -51,7 +51,7 @@ function nestNode(data, lvl, parentId, tgtNode) {
 		return nestNode(data, lvl, pId, childNode)
 	})
 
-	//console.log("nested", nested)
+	//console.log("nested", JSON.stringify(nested));
 
 	return nested	
 }
@@ -89,26 +89,49 @@ function buildTree(data) {
 			d.y = d.depth * 180 ;
 		});
 
-		var node = canvas.g.selectAll(".node")
+		var node = canvas.g.selectAll(".node-g")
 			.data(nodes, (d, i) => {
 				return d.data.node_id;
 			})
 
 		var nodeEnter = node.enter()
 			.append("g")
-			.attr("class", "node")
+			.attr("class", "node-g")
 			.attr("transform", (d, i) => {
-				var x = d.x * .5;
-				var y = d.y + 20;
+				var x = source.x * .5//d.x * .5;
+				var y = source.y + 20 //d.y + 20;
 				//source.y0 source.x0
 				return "translate(" + y + "," + x + ")"
 			})
 			.on("click", (d) => { 
 				console.log(d.data); 
+				alert(d.data.url); 
 			});
 
 		nodeEnter.append("circle")
+			.attr("class", "node")
+			.attr("r", 2)
+
+		nodeEnter.append("text")
+		//	.text( (d) => { return d.data.url; })
+
+		nodeUpdate = nodeEnter.merge(node);
+
+		nodeUpdate.transition()
+			.duration(1000)
+			.attr("transform", (d, i) => {
+				var x = d.x * .5;
+				var y = d.y + 20;
+				return "translate(" + y + "," + x + ")"
+			})
+		
+		nodeUpdate.select(".node")
+			.transition()
+			.duration(1000)
 			.attr("r", 10)
+
+		nodeExit = node.exit()
+			.remove()
 
 
 		var edge = canvas.g.selectAll(".edge")
@@ -120,22 +143,33 @@ function buildTree(data) {
 			.insert("path", "g")
 			.attr("class", "edge")
 			.attr("d", (d) => {
-				var o = { x: source.x0, y: source.y0}
+				//var o = { x: source.x0 *.5, y: source.y0}
 				//var o = { x: d.x, y: d.y}
-				return curvePath(o, o);
+				return curvePath(source, source)
+				//return curvePath(o, o);
 			})
 			.attr("stroke", "black")
 
+		var edgeUpdate = edgeEnter.merge(edge);
 
+		edgeUpdate.transition()
+			.duration(1000)
+			.attr("d", (d) => {
+				return curvePath(d, d.parent)
+			});
+
+
+		edgeExit = edge.exit()
+			.remove()
 	
 
 	}
 
 	function curvePath(s, d) {
-		return `M ${s.y} ${s.x}
-			C ${(s.y + d.y) / 2} ${s.x},
-			  ${(s.y + d.y) / 2} ${d.x},
-			  ${d.y} ${d.x}`
+		return `M ${s.y + 20} ${s.x * .5}
+			C ${(s.y + 20 + d.y + 20) / 2} ${s.x * .5},
+			  ${(s.y + 20 + d.y + 20) / 2} ${d.x * .5},
+			  ${d.y + 20 } ${d.x * .5}`
 
 
 	}
@@ -152,7 +186,7 @@ function buildTree(data) {
 function main() {
 	addCanvas("#tree-canvas");
 	console.log(canvas);
-	seedSubmit();
+//	seedSubmit();
 	
 
 }
