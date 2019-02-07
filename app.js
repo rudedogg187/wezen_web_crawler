@@ -11,6 +11,7 @@ var cheerio = require('cheerio');
 var URL = require('url-parse');
 var bodyParser = require('body-parser');
 var syncReq = require('sync-request');
+var fs = require('fs');
 // Port to run application on server 
 app.set('port', 8557);
 
@@ -29,7 +30,7 @@ app.use(express.urlencoded({extended: false }));
 app.use(cookieParser());
 
 // Enable crawler routes to be written in their own file 
-require('./routes/crawler')(app, request, cheerio, URL, bodyParser, syncReq);
+require('./routes/crawler')(app, cheerio, URL, bodyParser, syncReq, fs);
 require('./routes/indexRoutes')(app);
 require('./routes/accounts')(app);
 require('./routes/seeds')(app);

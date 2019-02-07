@@ -20,7 +20,7 @@ module.exports = (app) => {
 //        "popper.min.js",
 //        "bootstrap.min.js",
 //        "seed.js",
-//        "crawl.js"
+        "crawl.js"
 
       ]
     };
