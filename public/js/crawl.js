@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
   $.ajax({
     url: '/crawl/breadth',
     method: 'POST',
-    data: {steps: 5, word: 'This is a test word', url:'https://oregonstate.edu/'},
+    data: {steps: 2, word: 'This is a test word', url:'https://google.com/'},
     dataType: 'json',
     success: function(res) {
       populateTree(res);
