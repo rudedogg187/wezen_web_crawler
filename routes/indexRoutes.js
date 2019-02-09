@@ -17,7 +17,7 @@ module.exports = (app) => {
 	"ajax.js",
         "d3.v5.min.js",
 //        "semantic.min.js",
-        "popper.min.js",
+//        "popper.min.js",
 //        "bootstrap.min.js",
 //        "seed.js",
 //        "crawl.js"

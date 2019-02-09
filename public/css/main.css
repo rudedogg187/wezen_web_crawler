@@ -94,8 +94,15 @@ html, body {
 
 }
 
+
 .node-text {
   text-anchor: middle;
+  dominant-baseline: central;
+  fill: #31a354;
+
+}
+
+.detail-text {
   dominant-baseline: central;
   fill: #31a354;
 
