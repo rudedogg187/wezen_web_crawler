@@ -87,14 +87,29 @@ html, body {
 
 
 .node {
-  fill: orange;
-  fill-opacity: .25;
-  stroke: black;
-  stroke-width: 1;
+  fill: #f7fcb9;
+  fill-opacity: 1;
+  stroke: #31a354;
+  stroke-width: 2;
+
+}
+
+
+.node-text {
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: #31a354;
+
+}
+
+.detail-text {
+  dominant-baseline: central;
+  fill: #31a354;
 
 }
 
 .edge {
   fill-opacity: 0;
-  stroke: black;
+  stroke: #31a354;
+  stroke-width: 2;
 }
