@@ -10,8 +10,9 @@ router.get("/login", (req, res) => {
 
 // auth logout
 router.get("/logout", (req, res) => {
-/** HANDLE LOGOUT HERE **/
-  res.send("logout here") 
+  req.logout();
+  res.redirect("/");
+//  res.send("logout here") 
 
 });
 
@@ -24,8 +25,8 @@ router.get("/google", passport.authenticate("google", {
 
 // callback route for google to redirect to
 router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
-/** HANDLE GOOGLE AUTH HERE **/
-  res.send("google redirect here");  
+  res.redirect("/");
+  
 });
 
 module.exports = router;
