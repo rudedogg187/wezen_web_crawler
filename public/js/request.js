@@ -64,7 +64,19 @@ function submitSearch() {
 
 }
 
-function seedSubmit() {
+function dSeedSubmit() {
+//hardcoded
+var type = "depth";
+
+  var endPoint = "/seeds/" + type.toLowerCase();
+
+  ajax.get(endPoint, (res) => {
+    buildTree(res);
+  })
+	
+}
+
+function bSeedSubmit() {
 //hardcoded
 var type = "breadth";
   //var type = d3.select("#search-type").node().value;
@@ -105,6 +117,9 @@ function main() {
   var submitBtn = d3.select("#search-submit-btn")
     .on("click", submitSearch);
 
-  var seedBtn = d3.select("#seed-submit-btn")
-    .on("click", seedSubmit);
+  var dSeedBtn = d3.select("#d-seed-submit-btn")
+    .on("click", dSeedSubmit);
+
+  var bSeedBtn = d3.select("#b-seed-submit-btn")
+    .on("click", bSeedSubmit);
 }
