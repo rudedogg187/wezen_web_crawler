@@ -1,6 +1,13 @@
 // Import express modules for route handling 
 var express = require('express');
 const app = express(); 
+const cookieSession = require("cookie-session");
+const passport = require("passport");
+const passportSetup = require("./config/passportSetup");
+const authRoutes = require("./routes/authRoutes");
+const keys = require("./config/keys");
+const db = require("./db/wezenDb");
+
 var d3 = require('d3');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -29,8 +36,24 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false }));
 app.use(cookieParser());
 
+// Session cookie encrypter
+app.use(cookieSession({
+  //expires in one day
+  maxAge: 24 * 60 * 60 * 1000,
+  //encyrption keys
+  keys: [keys.session.cookieKey],
+}));
+
+// Init Passport
+app.use(passport.initialize());
+// Init Passport Sessions for login
+app.use(passport.session());
+
+// Auth Routes
+app.use("/auth", authRoutes);
+
 // Enable crawler routes to be written in their own file 
-require('./routes/crawler')(app, cheerio, URL, bodyParser, syncReq, fs);
+require('./routes/crawler')(app, cheerio, URL, bodyParser, syncReq, fs, db);
 require('./routes/indexRoutes')(app);
 require('./routes/accounts')(app);
 require('./routes/seeds')(app);

@@ -1,6 +1,10 @@
-module.exports = (app, cheerio, URL, bodyParser, syncReq, fs) => {
+module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
 
   app.post('/crawl/depth', (req, res) => {
+    var now = new Date();
+    var appId = req.user.appId;
+    console.log(now)
+
     var firstUrl = req.body.url;
     var word = req.body.word;
     var steps = req.body.steps;
@@ -14,6 +18,7 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs) => {
     }
     writeLog(firstUrl, steps);
     var collection = depthCrawl(steps, word, firstUrl); 
+    db.updateHistory(req.user, firstUrl, steps, "depth", collection);
     res.json(collection);
   });
 
@@ -31,6 +36,7 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs) => {
     }
     writeLog(firstUrl, steps);
     var collection = breadthCrawl(steps, word, firstUrl); 
+    db.updateHistory(req.user, firstUrl, steps, "breadth", collection);
     res.json(collection);
 
   });

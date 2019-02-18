@@ -1,0 +1,47 @@
+<div id="content-div" class="row">
+  <div id="hist-main" class="hist-col">
+    <div id="hist-head"><b>Crawl History</b></div>
+    {{#each user.history }}
+      {{this.url}}
+    {{/each}}
+  </div>
+  <div id="main-col" class="main-col">
+    <div id="search-div">
+      <span>
+        URL to crawl
+      </span>
+      <span>
+        <input id="url-text" type="text"></input>
+      </span>
+      <span>
+        Word
+      </span>
+      <span>
+        <input id="key-word" type="text"></input>
+      </span>
+      <span>
+        Steps
+      </span>
+      <span>
+        <input id="steps-int" type="text"></input>
+      </span>
+      <span>
+<!--needs to be a dropdown -->
+        <input id="search-type" type="text" value="depth"></input>
+      </span>
+      <span>
+        <button id="search-submit-btn">submit</button>
+      </span>
+      <span>
+        <button id="d-seed-submit-btn">d seed</button>
+      </span>
+      <span>
+        <button id="b-seed-submit-btn">b seed</button>
+      </span>
+    </div>
+    <div id="tree-canvas">
+  </div>
+
+
+  </div>
+</div>

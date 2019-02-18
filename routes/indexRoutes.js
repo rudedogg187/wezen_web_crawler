@@ -1,12 +1,19 @@
 
 
 module.exports = (app) => {
-
   app.get('/', (req, res) => {
+    loginFlag = false;
+    if(req.user) {
+      loginFlag = true;
+    }
+    
     var context = {
       layout: "index",
+      user: req.user,
+      loginFlag: loginFlag,
       css: [
         "main.css",
+        "navbar.css",
 //        "semantic.min.css",
 //        "bootstrap.min.css"
       ], 
@@ -25,7 +32,12 @@ module.exports = (app) => {
       ]
     };
 
-    res.render('../views/home.handlebars', context);
+    var view = "../views/home.handlebars";
+    if(req.user) {
+      view = "../views/graph.handlebars";
+    }
+    console.log(req.user)
+    res.render(view, context);
   });
 
 }
