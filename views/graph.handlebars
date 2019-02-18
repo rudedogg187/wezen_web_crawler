@@ -1,6 +1,9 @@
 <div id="content-div" class="row">
   <div id="hist-main" class="hist-col">
     <div id="hist-head"><b>Crawl History</b></div>
+    {{#each user.history }}
+      {{this.url}}
+    {{/each}}
   </div>
   <div id="main-col" class="main-col">
     <div id="search-div">
@@ -30,7 +33,10 @@
         <button id="search-submit-btn">submit</button>
       </span>
       <span>
-        <button id="seed-submit-btn">seed</button>
+        <button id="d-seed-submit-btn">d seed</button>
+      </span>
+      <span>
+        <button id="b-seed-submit-btn">b seed</button>
       </span>
     </div>
     <div id="tree-canvas">

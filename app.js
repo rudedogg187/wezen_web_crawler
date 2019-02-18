@@ -6,6 +6,7 @@ const passport = require("passport");
 const passportSetup = require("./config/passportSetup");
 const authRoutes = require("./routes/authRoutes");
 const keys = require("./config/keys");
+const db = require("./db/wezenDb");
 
 var d3 = require('d3');
 var cookieParser = require('cookie-parser');
@@ -52,7 +53,7 @@ app.use(passport.session());
 app.use("/auth", authRoutes);
 
 // Enable crawler routes to be written in their own file 
-require('./routes/crawler')(app, cheerio, URL, bodyParser, syncReq, fs);
+require('./routes/crawler')(app, cheerio, URL, bodyParser, syncReq, fs, db);
 require('./routes/indexRoutes')(app);
 require('./routes/accounts')(app);
 require('./routes/seeds')(app);

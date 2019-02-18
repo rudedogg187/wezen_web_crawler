@@ -36,7 +36,7 @@ module.exports = (app) => {
     if(req.user) {
       view = "../views/graph.handlebars";
     }
-    console.log(context)
+    console.log(req.user)
     res.render(view, context);
   });
 

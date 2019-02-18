@@ -104,10 +104,32 @@ module.exports = {
 
   },
 
-  updateHistory: (user, url, steps, type, collection) => {
-    console.log(user)
-  },
+  updateHistory: (user, url, steps, type, collection, cb) => {
+    if(user == null) { return; }
 
+    var record = {
+      url: url, steps: +steps, type: type, collection: collection, dt: new Date()
+    }
+    appId = user.appId;
+    readData(model.user.data, (allData) => {
+      userData = allData.filter( (f) => {
+        if(f.appId == appId) { return f; };
+      })[0];
+
+      userHistory = userData.history;
+
+      userHistory.push(record);
+    
+      userData.history = userHistory;
+      userData.modDt = new Date();
+
+      allData[appId] = userData;
+
+      writeData(model.user.data, allData);
+      
+    })
+
+  },
 
 }
 
