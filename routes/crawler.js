@@ -1,10 +1,42 @@
 module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
 
+  app.get('/crawl/history', (req, res) => {
+    if(req.user != null && req.user.userId != null) {
+      var path = './logs/' + req.user.userId + '.txt';
+      if(fs.existsSync(path)) {
+        var data = readData(path);
+        res.json(data);
+      }
+    }
+    else {
+      var data = readData('./logs/general.txt');
+      res.json(data);
+    }
+  });
+
+  function readData(path) {
+    var lines = fs.readFileSync(path, 'utf-8')
+      .split('\n')
+      .filter(Boolean);
+    var data = [];
+    lines.forEach((line) => {
+      if(line.startsWith('http')) {
+        var newObj = {url: line.trim(), steps:''};
+        data.push(newObj);
+      }
+      else if(!line.startsWith('*')) {
+        var newObj = data.pop(); 
+        newObj.steps = line.trim();
+        data.push(newObj);
+      }
+    });
+    return data;
+  }
+
   app.post('/crawl/depth', (req, res) => {
     var now = new Date();
     var appId = req.user.appId;
     console.log(now)
-
     var firstUrl = req.body.url;
     var word = req.body.word;
     var steps = req.body.steps;
@@ -16,7 +48,12 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
       res.status(400);
       res.send('Please provide positive number of steps.');
     }
-    writeLog(firstUrl, steps);
+    if(req.user != null && req.user.userId != null) {
+      writeLog(firstUrl, steps, req.user.userId);
+    }
+    else {
+      logGeneral(firstUrl, steps);
+    }
     var collection = depthCrawl(steps, word, firstUrl); 
     db.updateHistory(req.user, firstUrl, steps, "depth", collection);
     res.json(collection);
@@ -34,7 +71,12 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
       res.status(400);
       res.send('Please provide positive number of steps.');
     }
-    writeLog(firstUrl, steps);
+    if(req.user != null && req.user.userId != null) {
+      writeLog(firstUrl, steps, req.user.userId);
+    }
+    else {
+      logGeneral(firstUrl, steps);
+    }
     var collection = breadthCrawl(steps, word, firstUrl); 
     db.updateHistory(req.user, firstUrl, steps, "breadth", collection);
     res.json(collection);
@@ -165,9 +207,21 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
     return exists;
   }
 
-  function writeLog(firstUrl, steps) {
+  function writeLog(firstUrl, steps, userId) {
     var text = '**\n' + firstUrl + '\n' + steps + '\n';
-    fs.appendFile('./logs/tempFile.txt', text, function(err) {
+    var directory = './logs/';
+    directory += userId + '.txt';
+    fs.appendFile(directory, text, function(err) {
+      if(err) {
+        console.log(err);
+      }
+    });
+  }
+
+  function logGeneral(firstUrl, steps) {
+    var text = '**\n' + firstUrl + '\n' + steps + '\n';
+    var directory = './logs/general.txt';
+    fs.appendFile(directory, text, function(err) {
       if(err) {
         console.log(err);
       }
