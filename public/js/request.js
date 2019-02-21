@@ -41,8 +41,8 @@ function submitSearch() {
   var word = d3.select("#key-word").node().value;
   var steps = d3.select("#steps-int").node().value;
   var type = d3.select("#search-type").node().value;
-
-  if(validateSearchInput(url, steps) == 1) {
+  var errorMessages = validateSearchInput(url, steps);
+  if(errorMessages == null || errorMessages.length == 0) {
     var payload = {
       url: url,
       word: word,
@@ -59,7 +59,17 @@ function submitSearch() {
 
 
   } else {
-    console.log("not valid input");
+    toastr.options = {
+      timeOut: 0,
+      extendedTimeOut: 100,
+      tapToDismiss: true, 
+      debug: false,
+      fadeOut: 10,
+      positionClass: "toast-top-center"
+    };
+    errorMessages.forEach((err) => {
+      toastr.error(err);
+    });
   }
 
 }
@@ -91,21 +101,21 @@ var type = "breadth";
 
 
 function validateSearchInput(url, steps) {
-//need to write validation
-  if(!(+steps === parseInt(+steps, 10))) {
-    console.log("bad steps");
-    return 0;
+  var stepsInt = parseInt(steps); 
+  var errors = [];
+  if(steps == null || steps == '' || stepsInt <= 0 || stepsInt > 5) {
+    errors.push('Invalid Steps');
   }
-  if(+url === parseInt(+url, 10)) {
-    console.log("bad url");
-    return 0;
+  if(url == null || !isValidUrl(url)) {
+    errors.push('Invalid Url');
   }
+  return errors;
 
-
-  return 1;
 }
 
-
+function isValidUrl(url) {
+    return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(url);
+}
 
 function main() {
   var loginBtn = d3.select("#login-btn")

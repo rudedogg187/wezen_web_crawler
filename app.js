@@ -7,7 +7,6 @@ const passportSetup = require("./config/passportSetup");
 const authRoutes = require("./routes/authRoutes");
 const keys = require("./config/keys");
 const db = require("./db/wezenDb");
-
 var d3 = require('d3');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');

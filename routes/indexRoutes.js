@@ -12,6 +12,7 @@ module.exports = (app) => {
       user: req.user,
       loginFlag: loginFlag,
       css: [
+        "toastr.min.css",
         "main.css",
         "navbar.css",
 //        "semantic.min.css",
@@ -19,6 +20,7 @@ module.exports = (app) => {
       ], 
       js: [
         "jquery-3.3.1.min.js",
+        "toastr.min.js",
         "main.js",
 	"request.js",
 	"ajax.js",
