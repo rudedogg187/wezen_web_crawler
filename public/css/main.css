@@ -11,6 +11,7 @@ html, body {
   font-family: sans-serif;
   height: 100%;
   font-size: 14px;
+  background-color: #dddddd;
 }
 
 
@@ -88,10 +89,10 @@ html, body {
 
 
 .node {
-  fill: #f7fcb9;
-  fill-opacity: 1;
-  stroke: #31a354;
-  stroke-width: 2;
+  fill: #666666;
+  fill-opacity: .75;
+  stroke: #ffffff;
+  stroke-width: 1.5;
 
 }
 
@@ -99,7 +100,8 @@ html, body {
 .node-text {
   text-anchor: middle;
   dominant-baseline: central;
-  fill: #31a354;
+  fill: #ffffff;
+  font-weight: bold;
 
 }
 
@@ -111,6 +113,7 @@ html, body {
 
 .edge {
   fill-opacity: 0;
-  stroke: #31a354;
-  stroke-width: 2;
+  stroke: #ffffff;
+  stroke-width: 1.3;
+  stroke-linecap: round;
 }

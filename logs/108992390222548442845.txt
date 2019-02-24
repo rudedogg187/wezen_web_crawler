@@ -28,3 +28,9 @@ http://google.com
 **
 http://google.com
 3
+**
+http://google.com
+3
+**
+http://lcog.org
+3

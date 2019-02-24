@@ -67,6 +67,8 @@ function initLeaflet(canvas, zoom) {
     northEast: getNorthEast,
   };
 
+  canvas.getMargin = getMargin;
+
   canvas.renderTile();
 
   function addTiles() {
@@ -134,6 +136,39 @@ function initLeaflet(canvas, zoom) {
  //   console.log("tile:", this.activeTile) 
 
   }
+  function getMargin() {
+    var margin = {};
+    var x1 = 0;
+    var x2 = MAP_MARGIN.left;
+    var y1 = 0
+    var y2 = MAP_MARGIN.bottom;
+    var latLng1 = new L.LatLng(y1, x1);
+    var latLng2 = new L.LatLng(y2, x2);
+    var pt1 = canvas.base.latLngToLayerPoint(latLng1);
+    var pt2 = canvas.base.latLngToLayerPoint(latLng2);
+
+    margin.left = pt2.x - pt1.x;
+    margin.bottom = pt1.y - pt2.y;
+
+    x1 = 0
+    x2 = MAP_MARGIN.right;
+    y1 = 0
+    y2 = MAP_MARGIN.top;
+    latLng1 = new L.LatLng(y1, x1);
+    latLng2 = new L.LatLng(y2, x2);
+
+    pt1 = canvas.base.latLngToLayerPoint(latLng1);
+    pt2 = canvas.base.latLngToLayerPoint(latLng2);
+
+    margin.right = pt2.x - pt1.x;
+    margin.top = pt1.y - pt2.y;
+
+    return margin;
+    
+ 
+   
+
+  }
 
   function getCenter() {
       var y = MAP_CENTER.horiz;
@@ -194,6 +229,7 @@ function initLeaflet(canvas, zoom) {
     canvas.renderTile();
     insertTestPoints(canvas);
     translateNode();
+    translateEdge();
   } 
 
   canvas.base.setZoom(zoom);

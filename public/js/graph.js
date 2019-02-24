@@ -133,13 +133,15 @@ function buildTreex(data) {
 
 
 
-  function curvePath(s, d) {
-    return `M ${s.y + 20} ${s.x * .5}
-      C ${(s.y + 20 + d.y + 20) / 2} ${s.x * .5},
-        ${(s.y + 20 + d.y + 20) / 2} ${d.x * .5},
-        ${d.y + 20 } ${d.x * .5}`
+}
 
-  }
+
+function curvePathX(s, d) {
+  return `M ${s.y + 20} ${s.x * .5}
+  C ${(s.y + 20 + d.y + 20) / 2} ${s.x * .5},
+  ${(s.y + 20 + d.y + 20) / 2} ${d.x * .5},
+  ${d.y + 20 } ${d.x * .5}`
+
 }
 
 function buildTree(data) {
@@ -375,7 +377,7 @@ function buildTree(data) {
 			.delay(dur / 2 )
 			.style("fill-opacity", 0)
 	}
-
+/*
 	function curvePath(s, d) {
 		return `M ${s.y + 20} ${s.x * .5}
 			C ${(s.y + 20 + d.y + 20) / 2} ${s.x * .5},
@@ -383,27 +385,82 @@ function buildTree(data) {
 			  ${d.y + 20 } ${d.x * .5}`
 
 	}
+*/
 }
 
 
 function nodeTranslate(d, i) {
-      var x = d.x //* .5;
-      var y = d.y //+ 20;
-      var rootLatLng = new L.LatLng(0, 0);
-      var latLng = new L.LatLng(x, y);
-      var xy = canvas.base.latLngToLayerPoint(latLng);
-	var centY = canvas.getXY.center().y;
-	var rootY = canvas.base.latLngToLayerPoint(rootLatLng).y;
+  var x = d.x //* .5;
+  var y = d.y + 150//+ 20;
+  var rootLatLng = new L.LatLng(0, 0);
+  var margLatLng = new L.LatLng(MAP_MARGIN.left, MAP_MARGIN.bottom);
+  var latLng = new L.LatLng(x, y);
+  var xy = canvas.base.latLngToLayerPoint(latLng);
+  var centY = canvas.getXY.center().y;
+  var rootY = canvas.base.latLngToLayerPoint(rootLatLng).y;
+  var marg = canvas.base.latLngToLayerPoint(margLatLng);
+    
+/*
 	console.log("ry:", rootY);
 	console.log("cy:", centY);
-	var offsetY = (centY - rootY) / 2;
+	console.log("mg:", marg);  */
+  var offsetY = ((centY - rootY) / 2) - (canvas.getMargin().bottom *.35675)
 
 
-      return "translate(" + xy.x + "," + (xy.y + offsetY) + ")" 
+  return "translate(" + xy.x + "," + (xy.y + offsetY) + ")" 
 }
 
+function curvePath(s, d) {
+  var rootLatLng = new L.LatLng(0, 0);
+  var margLatLng = new L.LatLng(MAP_MARGIN.left, MAP_MARGIN.bottom);
+  var centY = canvas.getXY.center().y;
+  var rootY = canvas.base.latLngToLayerPoint(rootLatLng).y;
+  var marg = canvas.base.latLngToLayerPoint(margLatLng);
+  var offsetY = ((centY - rootY) / 2) - (canvas.getMargin().bottom *.35675)
+
+  var dx = d.x //* .5;
+  var dy = d.y + 150//+ 20;
+  var dLatLng = new L.LatLng(dx, dy);
+  var dxy = canvas.base.latLngToLayerPoint(dLatLng);
+
+  var sx = s.x //* .5;
+  var sy = s.y + 150//+ 20;
+  var sLatLng = new L.LatLng(sx, sy);
+  var sxy = canvas.base.latLngToLayerPoint(sLatLng);
+
+  dx = dxy.x;
+  dy = dxy.y + offsetY;
+
+  sx = sxy.x;
+  sy = sxy.y + offsetY;
+
+  return `
+    M ${sx} ${sy}
+    L ${dx} ${dy}
+  `
+/*
+  return `
+    M ${a1} ${a2}
+    C ${b1} ${b2},
+      ${c1} ${c2},
+      ${d1} ${d2}
+  `
+*/
+}
+
+
+function translateEdge() {
+  var dur = 50;
+  d3.selectAll(".edge")
+    .attr("d", (d) => {
+       return curvePath(d, d.parent)
+    });
+ 
+}
+
+
 function translateNode() {
-  var dur = 100;
+  var dur = 50;
   d3.selectAll(".node-g")
     .transition()
     .duration(dur)

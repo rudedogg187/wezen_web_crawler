@@ -245,7 +245,7 @@
 /* visual tweaks */
 
 .leaflet-container {
-	background: #ffffff;
+	background: #dddddd;
 	outline: 0;
 	}
 .leaflet-container a {
