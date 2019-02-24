@@ -223,16 +223,8 @@ function buildTree(data) {
 			.attr("class", "node-g")
 			.attr("id", (d, i) => {
 				return "node-g-" + i;
-			}) /*
-			.attr("transform", (d, i) => {
-				var x = source.x * .5//d.x * .5;
-				var y = source.y + 20 //d.y + 20;
-
-				//return "translate(" + y + "," + x + ")"
-				var latLng = new L.LatLng(y, x);
-				var xy = canvas.base.latLngToLayerPoint(latLng);
-				return "translate(" + xy.y + "," + xy.x + ")"
-			}) */
+			})
+			.attr("transform", nodeTranslate)
 			.on("click", (d) => { 
 				console.log(d.data); 
 				window.open(d.data.url); 
