@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <!-- CSS files -->
+  {{#each css}}
+    <link href="/css/{{this}}" rel="stylesheet">
+  {{/each}}
+  <!-- End CSS files -->
+  <title> 
+    Crawler
+  </title>
+  <meta charset="utf-8">
+  </head> 
+<body>
+  <!-- JS files -->
+  {{#each js}}
+    <script src="/js/{{this}}"></script>
+  {{/each}}
+  {{{body}}}
+</body>
+
+</html>
