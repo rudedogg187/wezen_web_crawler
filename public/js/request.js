@@ -21,7 +21,6 @@ function accountLogon() {
     var loginBtn = d3.select("#login-btn")
 
     loginBtn.html("Log Off");    
-
     var link = d3.select("#hist-main")
       .selectAll(".hist-link")
       .data(res.history);
@@ -51,10 +50,29 @@ function submitSearch() {
     }
 
     var endPoint = "/crawl/" + type.toLowerCase();
-
+    var submitBtn = document.getElementById("search-submit-btn");
+    submitBtn.disabled = true; 
+    submitBtn.removeEventListener('click', submitSearch);
+    submitBtn.innerText = 'Crawling';
+    toastr.options = {
+      closeButton: true, 
+      debug: false, 
+      newestOnTop: false,
+      progressBar: false, 
+      positionClass: "toast-top-full-width",
+      preventDuplicates: true,
+      timeOut: 0,
+      extendedTimeOut: 50,
+      tapToDismiss: true, 
+    }
+    toastr["info"]("Graph will populate shortly", "Crawl Started");
     console.log(payload);
     ajax.post(endPoint, payload, (res) => { 
       buildTree(res);
+      toastr.clear();
+      submitBtn.disabled = false;
+      submitBtn.addEventListener('click', submitSearch);
+      submitBtn.innerText = 'submit';
     })
 
 
