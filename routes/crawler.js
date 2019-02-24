@@ -5,14 +5,33 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
       var path = './logs/' + req.user.userId + '.txt';
       if(fs.existsSync(path)) {
         var data = readData(path);
+        if(data.length > 25) {
+          data = truncateData(data, 25);
+        }
         res.json(data);
       }
     }
     else {
       var data = readData('./logs/general.txt');
+      if(data.length > 25) {
+        data = truncateData(data, 25);
+      }
       res.json(data);
     }
   });
+
+  function truncateData(data, size) {
+    if(data.length <= size) {
+      return data;
+    }
+    var i = data.length - 1;
+    var collection = [];
+    for(var j = 0; j < size; j++) {
+      collection.push(data[i]);
+      i--;
+    }
+    return collection;
+  }
 
   function readData(path) {
     var lines = fs.readFileSync(path, 'utf-8')
@@ -54,7 +73,7 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
     else {
       logGeneral(firstUrl, steps);
     }
-    var collection = depthCrawl(steps, word, firstUrl); 
+    var collection = depthCrawl(steps, word, firstUrl);
     db.updateHistory(req.user, firstUrl, steps, "depth", collection);
     res.json(collection);
   });
@@ -153,39 +172,42 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
   function depthCrawl(maxSteps, word, pageToCrawl) {
     var collection = [];
     var idCounter = 1; 
-    var steps = 0; 
+    var steps = 0;
+    var currentUrls = []; 
     while(steps < maxSteps) {
       var url = new URL(pageToCrawl);
       var baseurl = url.protocol + "//" + url.hostname;
-      if(collection != null && collection.length > 0) {
-        var parentNode = collection.pop(); 
-        parentNode.children.push(idCounter);
-        collection.push(parentNode);
-      }
-      var newNode = createNode(idCounter++, pageToCrawl);
-      collection.push(newNode); 
-      let body = syncReq('GET', newNode.url).getBody();
-      var $ = cheerio.load(body);
-      var wordFound = false;
-      if(word != null && doesWordExist($, word)) {
-        wordFound = true;
-      }
-      var anchorTags = $('a');
-      var currentUrls = [];
-      anchorTags.each(function(index, anchorTag) {
-        if($(anchorTag).attr('href') != undefined) {
-          var urlString = $(anchorTag).attr('href');
-          if(urlString.startsWith('//') || urlString.startsWith('#')) {
-          }
-          else if(urlString.startsWith('/')) {
-            urlString = baseurl + urlString;
-            currentUrls.push(urlString);
-          }
-          else if(urlString.startsWith('http')) {
-            currentUrls.push(urlString);
-          }
+      var response = syncReq('GET', pageToCrawl);
+      if(response.statusCode == 200) {
+        if(collection != null && collection.length > 0) {
+          var parentNode = collection.pop(); 
+          parentNode.children.push(idCounter);
+          collection.push(parentNode);
         }
-      });
+        var newNode = createNode(idCounter++, pageToCrawl);
+        collection.push(newNode); 
+        var $ = cheerio.load(response.getBody());
+        var wordFound = false;
+        if(word != null && doesWordExist($, word)) {
+          wordFound = true;
+        }
+        var anchorTags = $('a');
+        currentUrls = [];
+        anchorTags.each(function(index, anchorTag) {
+          if($(anchorTag).attr('href') != undefined) {
+            var urlString = $(anchorTag).attr('href');
+            if(urlString.startsWith('//') || urlString.startsWith('#')) {
+            }
+            else if(urlString.startsWith('/')) {
+              urlString = baseurl + urlString;
+              currentUrls.push(urlString);
+            }
+            else if(urlString.startsWith('http')) {
+              currentUrls.push(urlString);
+            }
+          }
+        });
+      }
       pageToCrawl = currentUrls[Math.floor(Math.random() * currentUrls.length)];
       steps++  
     }
