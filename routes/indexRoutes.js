@@ -12,14 +12,19 @@ module.exports = (app) => {
     var history = null;
 
     if(req.user) {
-
       history = req.user.history.map( (d, i) => {
         var r = {};
         r.idx = i;
         d.idx = i;
+        r.type = d.type;
+        r.steps = d.steps;
         r.url = d.url;
         r.data = JSON.stringify(d);
         return r;
+      }).sort( (a, b) => {
+        return b.idx - a.idx
+      }).filter( (d, i) => {
+        if(i < 25) { return d; }
       })
   
     }
@@ -48,9 +53,9 @@ module.exports = (app) => {
         "canvas.js",
         "graph.js",
         "d3.v5.min.js",
-        "leaflet_1.3.4.js"
+        "leaflet_1.3.4.js",
+        "popper.min.js",
 //        "semantic.min.js",
-//        "popper.min.js",
 //        "bootstrap.min.js",
 //        "seed.js",
 //        "crawl.js"
