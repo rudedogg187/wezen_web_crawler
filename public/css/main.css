@@ -1,10 +1,21 @@
 :root {
   --main-form-border-color: #aaaaaa;
+  --color-light-grey: #dddddd;
   --main-form-background-color: #ffffff;
   --main-nav-background-color: #43a2ca;
   --main-form-text-color: var(--main-form-border-color);
   --main-body-background-color: #dddddd;
   --color-purple: #c994c7;
+}
+
+.history-url:hover {
+  font-weight: bold;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.history-url {
+  color: var(--color-light-grey);
 }
 
 

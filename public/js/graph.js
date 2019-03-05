@@ -16,31 +16,29 @@ function updateRect() {
     
 
 }
-var I = 0;
+
 function nestNode(data, lvl, parentId, tgtNode) {
-//console.log("I", I)
-	//console.log("tgtNode", tgtNode)
-	var nested = {};	
+  //console.log("tgtNode", tgtNode)
+  var nested = {};	
 
-	nested.branch = lvl;
-	nested.parent_id = parentId;
-	nested.node_id = tgtNode.id;
-	nested.url = tgtNode.url;
-	nested.I = I++;
+  nested.branch = lvl;
+  nested.parent_id = parentId;
+  nested.node_id = tgtNode.id;
+  nested.url = tgtNode.url;
 
-	var pId = tgtNode.id;
-	lvl++;
-	nested.children = tgtNode.children.map( (i) => {
-		var childNode = data.filter( (d) => {
-			if(d.id == i) { return d; }
-		})[0];
-		//console.log("cn", childNode)
-		return nestNode(data, lvl, pId, childNode)
-	})
+  var pId = tgtNode.id;
+  lvl++;
+  nested.children = tgtNode.children.map( (i) => {
+    var childNode = data.filter( (d) => {
+      if(d.id == i) { return d; }
+    })[0];
+    //console.log("cn", childNode)
+    return nestNode(data, lvl, pId, childNode)
+  })
 
-	//console.log("nested", JSON.stringify(nested));
+  //console.log("nested", JSON.stringify(nested));
 
-	return nested	
+  return nested	
 }
 
 function buildTreex(data) {
@@ -486,15 +484,15 @@ function graphAttribute(d) {
 
   var esw = m * 1.75;
   var nsw = m * .75;
-  var nfs = m * 7.5;
+  var nfs = 10; //m * 7.5;
   var nr = m * 7.5;
   var nt = null;
   
   if(d) {
-    nt = d.data.I + ": " + canvas.base.getZoom();
-//    if(canvas.base.getZoom() > -1) {
- //     nt = d.data.url;
-  //  }
+    nt = d.data.node_id;
+    if(canvas.base.getZoom() > -1) {
+      nt = d.data.url;
+    }
   }
   
   return {

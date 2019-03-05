@@ -4,7 +4,9 @@
 
       {{#each history }}
 
-        <div id="history-url-{{this.idx}}"class="history-url" data-d={{this.data}}>{{this.url}}</div>
+        <div id="history-url-{{this.idx}}" class="history-url" data-d={{this.data}}>
+          {{this.url}} <small>({{this.steps}} step {{this.type}})</small>
+        </div>
 
       {{/each}}
   </div>
