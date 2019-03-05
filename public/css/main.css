@@ -1,5 +1,15 @@
+:root {
+  --main-form-border-color: #aaaaaa;
+  --main-form-background-color: #ffffff;
+  --main-nav-background-color: #43a2ca;
+  --main-form-text-color: var(--main-form-border-color);
+  --main-body-background-color: #dddddd;
+  --color-purple: #c994c7;
+}
+
+
 .purpleBackground {
-  background-color: purple;
+  background-color: var(--main-purple);
 }
 
 .artboard {
@@ -11,6 +21,17 @@ html, body {
   font-family: sans-serif;
   height: 100%;
   font-size: 14px;
+  background-color: var(--main-body-background-color);
+}
+
+
+#google-user-img {
+  width: 25px;
+  height: 25px;
+}
+
+.leaflet-control-attribution {
+  display: none;
 }
 
 .row {
@@ -22,14 +43,14 @@ html, body {
 }
 
 .nav-logo {
+  color: #ffffff;
   font-size: 18px;
   font-style: italic;
   font-weight: bold;
 }
 
-
 .nav-bar {
-  background-color: blue;
+  background-color: var(--main-nav-background-color);
   color: #ffffff;
   padding: 10px;
   box-sizing: border-box;
@@ -44,9 +65,10 @@ html, body {
 }
 
 .hist-col {
-  background-color: purple;
+  background-color: var(--color-purple);
   color: #ffffff;
   width: 250px;
+  min-height: 500px;
   padding: 10px;
   height: 100%;
   box-sizing: border-box;
@@ -63,11 +85,33 @@ html, body {
   width: calc(100% - 250px);
 }
 
-#search-div {
+.form-div {
   padding: 10px;
   box-sizing: border-box;
-  background: #ffffff;
 }
+
+.form-item {
+  float: left;
+  margin: 10px;
+}
+
+input, select, button {
+  padding: 6px 4px;
+  border: .2px solid var(--main-form-border-color);
+  border-radius: 5px;
+  background: var(--main-form-background-color);
+  appearance: none;
+  color: var(--main-form-text-color);
+  
+}
+
+button {
+  color: var(--main-form-background-color);
+  background: var(--main-form-text-color);
+
+
+}
+
 
 #steps-int {
   width: 30px;
@@ -87,18 +131,21 @@ html, body {
 
 
 .node {
-  fill: #f7fcb9;
-  fill-opacity: 1;
-  stroke: #31a354;
-  stroke-width: 2;
+  fill: #666666;
+  fill-opacity: .90;
+  stroke: #ffffff;
 
 }
 
+input, label {
+  display: block;
+}
 
 .node-text {
   text-anchor: middle;
   dominant-baseline: central;
-  fill: #31a354;
+  fill: #ffffff;
+  font-weight: bold;
 
 }
 
@@ -110,6 +157,6 @@ html, body {
 
 .edge {
   fill-opacity: 0;
-  stroke: #31a354;
-  stroke-width: 2;
+  stroke: #ffffff;
+  stroke-linecap: round;
 }

@@ -1,37 +1,63 @@
 <div id="content-div" class="row">
   <div id="hist-main" class="hist-col">
     <div id="hist-head"><b>Crawl History</b></div>
-    {{#each user.history }}
-      {{this.url}}
-    {{/each}}
+
+      {{#each history }}
+
+        <div id="history-url-{{this.idx}}"class="history-url" data-d={{this.data}}>{{this.url}}</div>
+
+      {{/each}}
   </div>
   <div id="main-col" class="main-col">
-    <div id="search-div">
-      <span>
-        URL to crawl
-      </span>
-      <span>
-        <input id="url-text" type="text"></input>
-      </span>
-      <span>
-        Word
-      </span>
-      <span>
+    <div class="form-div">
+      <div id="root-url-form" class="form-item">
+        <label>
+          Root URL
+        </label>
+        <input id="url-text" type="text" value="http://google.com"></input>
+      </div>
+
+      <div id="keyword-form" class="form-item">
+        <label>
+          Keyword
+        </label>
         <input id="key-word" type="text"></input>
-      </span>
-      <span>
-        Steps
-      </span>
-      <span>
-        <input id="steps-int" type="text"></input>
-      </span>
-      <span>
-<!--needs to be a dropdown -->
-        <input id="search-type" type="text" value="depth"></input>
-      </span>
-      <span>
+      </div>
+
+      <div id="steps-form" class="form-item">
+        <label>
+          Steps
+        </label>
+        <select id="steps-int">
+          {{#each depth }}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div id="search-type-form" class="form-item">
+        <label>
+          Search Type
+        </label>
+        <select id="search-type">
+          {{#each search }}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div id="submit-form" class="form-item">
+        <label>
+          submit
+        </label>
         <button id="search-submit-btn">submit</button>
-      </span>
+      </div>
+
+    </div>
+
+    <div style="clear:both"></div>
+
+    <div>
       <span>
         <button id="d-seed-submit-btn">d seed</button>
       </span>
@@ -40,8 +66,10 @@
       </span>
     </div>
     <div id="tree-canvas">
+    </div>
   </div>
 
 
   </div>
 </div>
+
