@@ -16,8 +16,9 @@ function updateRect() {
     
 
 }
-
+var I = 0;
 function nestNode(data, lvl, parentId, tgtNode) {
+//console.log("I", I)
 	//console.log("tgtNode", tgtNode)
 	var nested = {};	
 
@@ -25,6 +26,7 @@ function nestNode(data, lvl, parentId, tgtNode) {
 	nested.parent_id = parentId;
 	nested.node_id = tgtNode.id;
 	nested.url = tgtNode.url;
+	nested.I = I++;
 
 	var pId = tgtNode.id;
 	lvl++;
@@ -145,166 +147,188 @@ function curvePathX(s, d) {
 }
 
 function buildTree(data) {
-	var treeData = nestNode(data, 0, null, data[0]);
-	console.log(treeData)
+  var treeData = nestNode(data, 0, null, data[0]);
+  //console.log(treeData)
 
-	var regR = 15;
-	var bigW = 155;
-	var bigH = 75;
-	var dur = 500;
+  var regR = 15;
+  var bigW = 155;
+  var bigH = 75;
+  var dur = 500;
 
-	var width = canvas.dimension().width;
-	var height = canvas.dimension().height;
+  var width = canvas.dimension().width;
+  var height = canvas.dimension().height;
 
-	var treemap = d3.tree()
-		.size([width, height]);
-
+  var treemap = d3.tree()
+    .size([width, height]);
 	
-	var root = d3.hierarchy(treeData, (d) => {
-		return d.children;
-	})
+  var root = d3.hierarchy(treeData, (d) => {
+    return d.children;
+  })
 
-	root.x0 = 0; //MAP_CENTER.horiz;
-	root.y0 = 0;
+  root.x0 = 0; //MAP_CENTER.horiz;
+  root.y0 = 0;
 
-	update(root);
+  console.log("root:", root)
+  update(root);
 
-	function update(source) {
-		var treeData = treemap(root);
+  function update(source) {
+    console.log("source.data:", source.data)
+    var treeData = treemap(root);
+    var nodes = treeData.descendants();
 
-		var nodes = treeData.descendants();
+    var edges = treeData.descendants()
+      .slice(1);
 
-		var edges = treeData.descendants()
-			.slice(1);
+    nodes.forEach( (d) => {
+      d.y = d.depth * 180 ;
+    });
+/*************************************************EDGE UPDATE*******************************************************/
+    var edge = canvas.g.selectAll(".edge")
+      .data(edges, (d, i) => { 
+        return d.data.node_id;
+      })
 
-		nodes.forEach( (d) => {
-			d.y = d.depth * 180 ;
-		});
+    var edgeEnter = edge.enter()
+      .insert("path", "g")
+      .attr("class", "edge")
+      .attr("id", (d) => {
+        return "edge-" + d.data.parent_id + "-" + d.data.node_id;
+      }) /*
+      .attr("d", (d) => {
+        return curvePath(source, source)
+      })
+      .attr("stroke", "black")
+*/
+      var edgeUpdate = edgeEnter.merge(edge);
 
-		var edge = canvas.g.selectAll(".edge")
-			.data(edges, (d, i) => { 
-				return d.data.node_id;
-			})
+      edgeUpdate.transition()
+        .duration(dur)
+        .attr("d", (d) => {
+          return curvePath(d, d.parent)
+        })
+        .attr("stroke-width", graphAttribute().edgeStrokeWidth)
 
-		var edgeEnter = edge.enter()
-			.insert("path", "g")
-			.attr("class", "edge")
-			.attr("id", (d) => {
-				return "edge-" + d.data.parent_id + "-" + d.data.node_id;
-			})
-			.attr("d", (d) => {
-				//var o = { x: source.x0 *.5, y: source.y0}
-				//var o = { x: d.x, y: d.y}
-				return curvePath(source, source)
-				//return curvePath(o, o);
-			})
-			.attr("stroke", "black")
+      edgeExit = edge.exit()
+       .remove()
+/**************************************************EDGE UPDATE************************************************************/	
 
-		var edgeUpdate = edgeEnter.merge(edge);
+    // create a svg g for each node
+    var node = canvas.g.selectAll(".node-g")
+      .data(nodes, (d, i) => {
+        return i//d.data.node_id;
+      })
 
-		edgeUpdate.transition()
-			.duration(dur)
-			.attr("d", (d) => {
-				return curvePath(d, d.parent)
-			});
-
-
-		edgeExit = edge.exit()
-			.remove()
-	
-
-		var node = canvas.g.selectAll(".node-g")
-			.data(nodes, (d, i) => {
-				return i//d.data.node_id;
-			})
-
-		var nodeEnter = node.enter()
-			.append("g")
-			.attr("class", "node-g")
-			.attr("id", (d, i) => {
-				return "node-g-" + i;
-			})
-			.attr("transform", nodeTranslate)
-			.on("click", (d) => { 
-				console.log(d.data); 
-				window.open(d.data.url); 
-			})
-
-
-		var nodeCirc = nodeEnter.append("rect")
-			.attr("class", (d) => {
-				return "node node-id-" + d.data.node_id;
-			})
-			.attr("id", (d, i) => { return "node-" + i })
-			.attr("width", 1)
-			.attr("height", 1)
-			.on("mouseover", nodeHoverOver)
-			.on("mouseout", nodeHoverOut)
+    /*** ENTERING NEW NODE G ***/
+    // handle new node data entering canvas
+    var nodeEnter = node.enter()
+      .append("g")
+      .attr("class", "node-g")
+      .attr("id", (d, i) => {
+        return "node-g-" + i;
+      })
+      .attr("transform", nodeTranslate)
+      .on("click", (d) => { 
+        console.log(d.data); 
+        window.open(d.data.url); 
+      })
 
 
-		var nodeText = nodeEnter.append("text")
-			.attr("class", "node-text")
-			.attr("id", (d, i) => { return "node-text-" + i; })
-			.text( (d) => { return d.data.node_id; })
+    /*** ENTERING NEW CIRCLE ***/
+    // append a new "circle" to g when new data enters (actually a rectangle that looks like a circle)
+    var nodeCirc = nodeEnter.append("rect")
+      .attr("class", (d) => {
+        return "node node-id-" + d.data.node_id;
+      })
+      .attr("id", (d, i) => { return "node-" + i })
+      .attr("width", 1)
+      .attr("height", 1)
+      .on("mouseover", nodeHoverOver)
+      .on("mouseout", nodeHoverOut)
+
+    /*** ENTERING NEW TEXT ***/
+    // append a new text element to g when new data enters
+    var nodeText = nodeEnter.append("text")
+      .attr("class", "node-text")
+      .attr("id", (d, i) => { return "node-text-" + i; })
+   //   .text( (d) => { 
+   //     return d.data.I; //d.data.node_id; 
+   //   })
 
 
-		var nodeDetail = nodeEnter.selectAll(".detail-text")
-			.data( (d) => { 
-				var mom = data.filter( (f) => {
-					if(f.id == d.data.parent_id) { return f; }
-				})
-				if( mom.length > 0 ) { 
-					mom = mom[0]; 
-				}
-				else { 
-					mom = { url: null, id: null, children: [] };
-				}
+/******************* ENTERING NEW DETAIL TEXT NEEDS FIXED ****************************/
+    // append a new text detail to g when data enters
+    var nodeDetail = nodeEnter.selectAll(".detail-text")
+      .data( (d) => { 
+        var mom = data.filter( (f) => {
+          if(f.id == d.data.parent_id) { 
+            return f; 
+          }
+        })
+        if( mom.length > 0 ) { 
+          mom = mom[0]; 
+        } else {
+          mom = { url: null, id: null, children: [] };
+        }
 
-				var sis = mom.children.filter( (f) => {
-					if(f != d.data.node_id) { return f; }
-				})
+        var sis = mom.children.filter( (f) => {
+          if(f != d.data.node_id) { 
+            return f; 
+          }
+        })
 
-				return [
-					{ id: d.data.node_id, text: d.data.url },
-					{ id: d.data.node_id, text: "Child Count: " + d.data.children.length },
-					{ id: d.data.node_id, text: "Sibling Count: " + sis.length },
-				] 
-			});
+        return [
+          { id: d.data.node_id, text: d.data.url },
+          { id: d.data.node_id, text: "Child Count: " + d.data.children.length },
+          { id: d.data.node_id, text: "Sibling Count: " + sis.length },
+        ] 
+    });
 
-		nodeDetail.enter()
-			.append("text")
-			.attr("class", (d) => { return "detail-text detail-text-" + d.id })
-			.attr("y", (d, i) => { return -16 + i * 20; })
-			.attr("x", -4)
-			.style("fill-opacity", 0)
-			.text( (d) => { return d.text; })
-			
+    nodeDetail.enter()
+      .append("text")
+      .attr("class", (d) => { return "detail-text detail-text-" + d.id })
+      .attr("y", (d, i) => { return -16 + i * 20; })
+      .attr("x", -4)
+      .style("fill-opacity", 0)
+      .text( (d) => { 
+        return d.text; 
+      })
 
-		nodeDetail.merge(nodeDetail)
+    nodeDetail.merge(nodeDetail)
 
-		nodeDetail.exit()
-			.remove()
+    nodeDetail.exit()
+      .remove()
+/********** NODE DETAILS THIS NEEDS FIXED *************************/
 
-		nodeUpdate = nodeEnter.merge(node);
+    /*** UPDATING EXITING NODE G ***/
+    // handle exisiting node data on canvas
+    nodeUpdate = nodeEnter.merge(node);
 
-		nodeUpdate.transition()
-			.duration(dur)
-			.attr("transform", nodeTranslate);
-		
-		nodeUpdate.select(".node")
-			.transition()
-			.duration(dur)
-			//.attr("r", regR)
-			.attr("width", regR * 2)
-			.attr("height", regR * 2)
-			.attr("rx", regR)
-			.attr("ry", regR)
-			.attr("transform", "translate(" + -regR + ", " + -regR + ")");
+    // node transition
+    nodeUpdate.transition()
+      .duration(dur)
+      .attr("transform", nodeTranslate);
 
-		nodeExit = node.exit()
-			.remove()
+    // handle exisiting node circles data on canvas
+    nodeUpdate.select(".node")
+      .transition()
+      .duration(dur)
+      .attr("stroke-width", graphAttribute().nodeStrokeWidth)
+      //.attr("r", regR)
+      .attr("width", graphAttribute().nodeRadius * 2 )
+      .attr("height", graphAttribute().nodeRadius * 2 )
+      .attr("rx", graphAttribute().nodeRadius)
+      .attr("ry", graphAttribute().nodeRadius)
+      .attr("transform", "translate(" + -graphAttribute().nodeRadius + ", " + -graphAttribute().nodeRadius + ")");
 
-	}
+    // handle exisiting node text data on canvas
+    nodeUpdate.select(".node-text")
+      .text( (d) => { return graphAttribute(d).nodeText;} )
+
+
+    // handle exiting node data
+    nodeExit = node.exit()
+      .remove()
+  }
 
 
 	function nodeHoverOver(d, i) {
@@ -321,7 +345,7 @@ function buildTree(data) {
 			mom_fill: myMom.style("fill"),
 		}
 
-		myEdge.style("stroke-width", 10)
+		myEdge.style("stroke-width", graphAttribute().edgeStrokeWidth)
 		myMom.style("fill", "yellow")
 		me.transition()
 			.duration(dur)
@@ -353,12 +377,11 @@ function buildTree(data) {
 
 		me.transition()
 			.duration(dur)
-			.attr("width", regR * 2)
-			.attr("height", regR * 2)
-			.attr("rx", regR)
-			.attr("ry", regR)
-			//.attr("r", regR)
-			.attr("transform", "translate(" + -regR + ", " + -regR + ")");
+      			.attr("width", graphAttribute().nodeRadius * 2 )
+      			.attr("height", graphAttribute().nodeRadius * 2 )
+      			.attr("rx", graphAttribute().nodeRadius)
+      			.attr("ry", graphAttribute().nodeRadius)
+       			.attr("transform", "translate(" + -graphAttribute().nodeRadius + ", " + -graphAttribute().nodeRadius + ")");
 
 		myText.transition()
 			.delay(dur / 2 )
@@ -379,6 +402,8 @@ function buildTree(data) {
 	}
 */
 }
+
+
 
 
 function nodeTranslate(d, i) {
@@ -451,8 +476,84 @@ function translateEdge() {
 }
 
 
+function graphAttribute(d) {
+  var m = 1;
+  var z = -3;
+  while(z < canvas.base.getZoom()) { 
+    z ++
+    m *= 2;
+  }
+
+  var esw = m * 1.75;
+  var nsw = m * .75;
+  var nfs = m * 7.5;
+  var nr = m * 7.5;
+  var nt = null;
+  
+  if(d) {
+    nt = d.data.I + ": " + canvas.base.getZoom();
+//    if(canvas.base.getZoom() > -1) {
+ //     nt = d.data.url;
+  //  }
+  }
+  
+  return {
+    edgeStrokeWidth: esw,
+    nodeStrokeWidth: nsw,
+    nodeRadius: nr,
+    nodeFontSize: nfs,
+    nodeText: nt,
+  }
+}
+
+
+function getNodeRadius() {
+  var m = 1;
+  var z = -3;
+  while(z < canvas.base.getZoom()) { 
+    z ++
+    m *= 2;
+  }
+
+  var r = m * 7.5;
+  return r;
+}
+
+
+
+function scaleNode() {
+  var nr = graphAttribute().nodeRadius;
+  var nsw = graphAttribute().nodeStrokeWidth;
+  var esw = graphAttribute().edgeStrokeWidth;
+  var fs = graphAttribute().nodeFontSize;
+  
+  var dur = 0;
+  d3.selectAll(".node")
+    .transition()
+    .duration(dur)
+      .style("stroke-width", nsw)
+      .attr("width", nr * 2)
+      .attr("height", nr * 2)
+      .attr("rx", nr)
+      .attr("ry", nr)
+      .attr("transform", "translate(" + -nr + ", " + -nr + ")"); 
+
+  d3.selectAll(".edge")
+    .transition()
+    .duration(dur)
+      .style("stroke-width", esw)
+
+  d3.selectAll(".node-text")
+    .transition()
+    .duration(dur)
+    .style("font-size", fs + "px")
+    .text( (d) => { return graphAttribute(d).nodeText;} )
+
+}
+
+
 function translateNode() {
-  var dur = 50;
+  var dur = 0;
   d3.selectAll(".node-g")
     .transition()
     .duration(dur)

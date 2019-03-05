@@ -11,8 +11,8 @@ function initCanvas(canvas, canvasId) {
 
   function getDimension() {
 //**needed** add function to get dim of window size change here
-    var width = 700;
-    var height = 400;
+    var width = MAP_WIDTH * .466666666667
+    var height = MAP_HEIGHT * .2666666666667;
     return { width: width, height: height };
   
   }
@@ -223,9 +223,8 @@ function initLeaflet(canvas, zoom) {
   function zoomEnd() {
     //alert(canvas.base.getPixelOrigin())
 
-    console.log("c", canvas.getXY.center().y)
-    console.log("s", canvas.getXY.southWest().y)
-
+    scaleNode();
+    console.log("zoom", canvas.base.getZoom());
     canvas.renderTile();
     insertTestPoints(canvas);
     translateNode();
