@@ -1,11 +1,13 @@
 :root {
-  --main-form-border-color: #aaaaaa;
   --color-light-grey: #dddddd;
+  --main-form-border-color: #777777;
+  --main-form-label-color: #777777;
   --main-form-background-color: #ffffff;
   --main-nav-background-color: #43a2ca;
   --main-form-text-color: var(--main-form-border-color);
   --main-body-background-color: #dddddd;
   --color-purple: #c994c7;
+  --container-border-radius: 3px;
 }
 
 .history-url:hover {
@@ -60,20 +62,45 @@ html, body {
   font-weight: bold;
 }
 
+.logo-text {
+  text-shadow: 0px 0px 3px rgb(0, 0, 0, .4);
+}
+
 .nav-bar {
   background-color: var(--main-nav-background-color);
   color: #ffffff;
-  padding: 10px;
+  padding: 20px;
   box-sizing: border-box;
+  margin: 4px 0;
+  border-radius: var(--container-border-radius);
+  box-shadow: 0px 0px 1px var(--main-nav-background-color);
+}
+
+
+#logon-btn, #logout-btn:hover {
+  color: #ffffff;
+  background: rgb(255, 255, 255, 0.2);
+} 
+
+#logon-btn:hover, #logout-btn {
+  background: #ffffff;
+  color: var(--main-nav-background-color);
 }
 
 .btn {
   padding: 10px;
+  font-size: 16px;
+  text-decoration: none;
+  padding: 5px;
+  display: block;
+  border-radius: 5px;
+  vertical-align: middle;
+}
+.btn:hover {
+  font-weight: 500;
+  box-shadow: 1px 1px 4px rgb(0, 0, 0, .2)
 }
 
-.btn:hover {
-  font-weight: bold;
-}
 
 .hist-col {
   background-color: var(--color-purple);
@@ -84,6 +111,9 @@ html, body {
   height: 100%;
   box-sizing: border-box;
   float: left;
+  border-radius: var(--container-border-radius);
+  margin: 10px 0px 10px 0px;
+  box-shadow: 0px 0px 1px var(--color-purple);
 }
 
 #content-div {
@@ -97,7 +127,7 @@ html, body {
 }
 
 .form-div {
-  padding: 10px;
+  padding: 0px;
   box-sizing: border-box;
 }
 
@@ -106,30 +136,57 @@ html, body {
   margin: 10px;
 }
 
+.search-lbl {
+  color: var(--main-form-label-color);
+  font-style: italic;
+  font-weight: 600;
+  margin: 0 0 5px 0;
+}
+
+select {
+  -webkit-appearance: none; 
+  -moz-appearance: none;
+}
+
 input, select, button {
   padding: 6px 4px;
-  border: .2px solid var(--main-form-border-color);
+  font-size: 12px;
+  border: 1px solid var(--main-form-border-color);
   border-radius: 5px;
   background: var(--main-form-background-color);
   appearance: none;
   color: var(--main-form-text-color);
-  
 }
 
-button {
+input:hover, select:hover {
+  box-shadow: 1px 1px 4px rgb(0, 0, 0, .4)
+}
+
+#search-submit-btn {
   color: var(--main-form-background-color);
   background: var(--main-form-text-color);
+}
 
+#search-submit-btn:hover {
+  background: var(--main-form-background-color);
+  color: var(--main-form-text-color);
 
 }
 
+#url-text {
+  min-width: 300px;
+}
+
+#key-word {
+  min-width: 200px;
+}
 
 #steps-int {
-  width: 30px;
+  min-width: 50px;
 }
 
 #search-type {
-  width: 60px;
+  min-width: 100px;
 }
 
 #search-type {
@@ -171,3 +228,8 @@ input, label {
   stroke: #ffffff;
   stroke-linecap: round;
 }
+
+#test-data-btns {
+  display: none;
+}
+

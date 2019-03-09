@@ -72,7 +72,7 @@ function submitSearch() {
       toastr.clear();
       submitBtn.disabled = false;
       submitBtn.addEventListener('click', submitSearch);
-      submitBtn.innerText = 'submit';
+      submitBtn.innerText = 'Crawl';
     })
 
 

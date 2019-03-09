@@ -24,14 +24,16 @@
   {{/if}}
   <nav class="nav-bar">
     <span class="nav-logo">
-      Wezen Web Crawler
+      <span class="logo-text">
+        Wezen Web Crawler
+      </span>
     </span>
     <span class="right nav-account">
     <ul>
       {{#if user}}
-      <li><a href="/auth/logout">Log Out</a></li>
+      <li><a id="logon-btn" class="btn" href="/auth/logout">Log Out</a></li>
       {{else}}
-      <li><a href="/auth/login">Log In</a></li>
+      <li><a id="logout-btn" class="btn" href="/auth/login">Log In</a></li>
       {{/if}}
     </ul>
   </nav> <!--

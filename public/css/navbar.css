@@ -1,10 +1,6 @@
 
 
 
-nav {
-  background: blue;
-  padding: 20px 10px;
-}
 
 nav ul {
   max-width: 960px;
@@ -18,12 +14,4 @@ nav li {
   margin: 0 10px 0 0;
 }
 
-nav a {
-  color: #ffffff;
-  font-size: 18px;
-  background: rgb(255, 255, 255, 0.2);
-  text-decoration: none;
-  padding: 10px;
-  display: block;
-}
 
