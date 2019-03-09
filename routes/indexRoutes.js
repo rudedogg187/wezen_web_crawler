@@ -31,8 +31,8 @@ module.exports = (app) => {
 
     var context = {
       layout: "index",
-      depth: [1, 2, 3, 4, 5, 6], 
-      search: ["depth", "breadth"],
+      depth: [1, 2, 3, 4, 5], 
+      search: ["Depth", "Breadth"],
       user: req.user,
       history: history,
       loginFlag: loginFlag,

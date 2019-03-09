@@ -17,6 +17,11 @@ const MAP_MARGIN = {
 var canvas;
 
 function main() {
+  window.addEventListener("hashchange", () => {
+    if(window.location.hash == "#test") { 
+      d3.select("#test-data-btns").style("display", "block");
+    }
+  })
 
   canvas = initCanvas(canvas, "tree-canvas");
   initLeaflet(canvas, 0);
@@ -40,7 +45,7 @@ function main() {
 
 //  insertTestPoints(canvas);
 
-  
+    
 
 }
 
