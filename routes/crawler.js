@@ -38,15 +38,22 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
       .split('\n')
       .filter(Boolean);
     var data = [];
+    var index = 0;
     lines.forEach((line) => {
       if(line.startsWith('http')) {
-        var newObj = {url: line.trim(), steps:''};
+        var newObj = {url: line.trim(), steps:'', idx:index++, type: ''};
         data.push(newObj);
       }
       else if(!line.startsWith('*')) {
-        var newObj = data.pop(); 
-        newObj.steps = line.trim();
-        data.push(newObj);
+        var newObj = data.pop();
+        if(newObj.steps == '') { 
+          newObj.steps = line.trim();
+          data.push(newObj);
+        }
+        else {
+          newObj.type = line.trim(); 
+          data.push(newObj);
+        }
       }
     });
     return data;
@@ -66,16 +73,16 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
       res.send('Please provide positive number of steps.');
     }
     if(req.user != null && req.user.userId != null) {
-      writeLog(firstUrl, steps, req.user.userId);
+      writeLog(firstUrl, steps, req.user.userId, 'Depth');
       user = req.user;
     }
     else {
 //      req.user = {userId: -1};
-      logGeneral(firstUrl, steps);
+      logGeneral(firstUrl, steps, 'Depth');
     }
 
     var collection = depthCrawl(steps, word, firstUrl); 
-    db.updateHistory(user, firstUrl, steps, "depth", collection);
+    db.updateHistory(user, firstUrl, steps, "Depth", collection);
 
     res.json(collection);
   });
@@ -93,10 +100,10 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
       res.send('Please provide positive number of steps.');
     }
     if(req.user != null && req.user.userId != null) {
-      writeLog(firstUrl, steps, req.user.userId);
+      writeLog(firstUrl, steps, req.user.userId, 'Breadth');
     }
     else {
-      logGeneral(firstUrl, steps);
+      logGeneral(firstUrl, steps, 'Breadth');
     }
     var collection = breadthCrawl(steps, word, firstUrl); 
     db.updateHistory(req.user, firstUrl, steps, "breadth", collection);
@@ -231,8 +238,8 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
     return exists;
   }
 
-  function writeLog(firstUrl, steps, userId) {
-    var text = '**\n' + firstUrl + '\n' + steps + '\n';
+  function writeLog(firstUrl, steps, userId, type) {
+    var text = '**\n' + firstUrl + '\n' + steps + '\n' + type + '\n';;
     var directory = './logs/';
     directory += userId + '.txt';
     fs.appendFile(directory, text, function(err) {
@@ -242,8 +249,8 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
     });
   }
 
-  function logGeneral(firstUrl, steps) {
-    var text = '**\n' + firstUrl + '\n' + steps + '\n';
+  function logGeneral(firstUrl, steps, type) {
+    var text = '**\n' + firstUrl + '\n' + steps + '\n' + type + '\n';
     var directory = './logs/general.txt';
     fs.appendFile(directory, text, function(err) {
       if(err) {

@@ -10,7 +10,6 @@ function createAccount() {
 
 }
 
-
 function accountLogon() {
   var payload = {
     user: "testie",
@@ -70,6 +69,7 @@ function submitSearch() {
     ajax.post(endPoint, payload, (res) => { 
       buildTree(res);
       toastr.clear();
+      populateHistory();
       submitBtn.disabled = false;
       submitBtn.addEventListener('click', submitSearch);
       submitBtn.innerText = 'Crawl';
