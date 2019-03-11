@@ -225,7 +225,20 @@ input, label {
   dominant-baseline: central;
   font-weight: bold;
   font-family: courier;
-  font-size: 8;
+  font-size: 7;
+
+}
+
+.legand-text {
+  dominant-baseline: central;
+  font-weight: bold;
+  font-family: courier;
+  font-size: 7;
+
+}
+
+.node-text:hover {
+  cursor: pointer;
 
 }
 
