@@ -1,282 +1,89 @@
 
 
-
-function initCanvas(canvas, canvasId) {
-  var canvas = {};
+function initCanvas(canvasId, zoom) {
+  canvas = {}
   var tag = "#" + canvasId;
   canvas.div = d3.select(tag);
   canvas.id = canvasId;
   canvas.dimension = getDimension;
-  canvas.resize = resizeCanvas;
+  canvas.div.style("width", canvas.dimension().width)
+  canvas.div.style("height", canvas.dimension().height)
 
-  function getDimension() {
-//**needed** add function to get dim of window size change here
-    var width = MAP_WIDTH * .466666666667
-    var height = MAP_HEIGHT * .2666666666667;
-    return { width: width, height: height };
-  
-  }
-
-  function resizeCanvas() {
-    this.div.style("min-width", this.dimension().width + "px")
-    this.div.style("min-height", this.dimension().height + "px")
-    this.div.style("max-width", this.dimension().width + "px")
-    this.div.style("max-height", this.dimension().height + "px")
-  }
-
-  canvas.resize();
-  return canvas
-}
-
-function initLeaflet(canvas, zoom) {
-//**CHECK
-
-  canvas.bounds = [[0, 0], [MAP_WIDTH, MAP_WIDTH]]
   canvas.base = L.map(canvas.id, {
     zoomControl: false, 
     crs: L.CRS.Simple,
-    minZoom: -3,
-    maxZoom: 10,
+    minZoom: -10,
+    maxZoom: 20,
   });
 
-
-//**CHECK
-
-  canvas.base.setView( [MAP_WIDTH / 2, MAP_WIDTH / 2], 0); 
-  canvas.base.fitBounds(canvas.bounds);
-  canvas.tiles = addTiles()
-  canvas.activeTile = -1;
-  canvas.renderTile = renderTile;
-  canvas.base.on("zoomend", zoomEnd);
-
+  canvas.base.setView( [canvas.dimension().width / 2, canvas.dimension().height / 2], 0); 
   L.svg({
     clickable: true,
   }).addTo(canvas.base);
 
+
   canvas.overlay = d3.select(canvas.base.getPanes().overlayPane);
   canvas.svg = canvas.overlay.select("svg");
-  canvas.g = canvas.svg.select("g");
+  canvas.g = canvas.svg.select("g")
+    .attr("transform", "scale(1)")
+
+  canvas.base.setZoom(0);
+  canvas.zoom = 0;
 
   canvas.overlay.style("pointer-events", "auto");
   canvas.svg.style("pointer-events", "auto");
-  canvas.getXY = {
-    center: getCenter,
-    northWest: getNorthWest,
-    southWest: getSouthWest,
-    southEast: getSouthEast,
-    northEast: getNorthEast,
-  };
 
-  canvas.getMargin = getMargin;
-
-  canvas.renderTile();
-
-  function addTiles() {
-    tiles = [];
-    var tileLst = [
-      { url: "/img/background-0.png", bounds: [[0, 0], [MAP_WIDTH, MAP_HEIGHT]] },
-      { url: "/img/background-1.png", bounds: [[-25, -25], [1500, 1500]] },
-      { url: "/img/background-2.png", bounds: [[-25, -25], [1500, 1500]] },
-      { url: "/img/background-3.png", bounds: [[-25, -25], [1500, 1500]] },
-    ]; 
-
-    for(var i = 0; i < tileLst.length; i++) {
-      var tile = tileLst[i];
-
-      var l = L.imageOverlay(tile.url, tile.bounds)
-        .addTo(canvas.base);
-
-      var id = "background-image-" + i;
-
-      tileLst[i].id = id; //l._leaflet_id;
-      tileLst[i].leafletId = l._leaflet_id
-
-      d3.selectAll(".leaflet-image-layer")._groups[0].forEach( (layer) => {
-        if(layer.id == "") { 
-          layer.id = id; 
-          //var tile = d3.select("#" + id).style("display", "none")
-          var tile = d3.select("#" + id).style("visibility", "hidden")
-          tiles.push(tile)
-	}
-      })
-    };
-    
-    return tiles;
-  }
-
-  function renderTile() {
-    var zoomLevel = this.base.getZoom();
-    var layerId;
-    var levels = [4, 6, 8];
-
-    if(zoomLevel <= levels[0]) {
-        layerId = 0
-    } else if (zoomLevel <= levels[1]) {
-        layerId = 1;
-    } else if (zoomLevel <= levels[2]) {
-        layerId = 2;
-    } else {
-        layerId = 3;
-    }
-
-    if(this.activeTile != layerId) {
-  
-      d3.select("#background-image-" + this.activeTile)
-        //.style("display", "none");
-        .style("visibility", "hidden");
-
-      this.activeTile = layerId;
-
-      d3.select("#background-image-" + this.activeTile)
-       // .style("display", null);
-        .style("visibility", null);
-
-    }
- //   console.log("zoom:", zoomLevel)
- //   console.log("tile:", this.activeTile) 
-
-  }
-  function getMargin() {
-    var margin = {};
-    var x1 = 0;
-    var x2 = MAP_MARGIN.left;
-    var y1 = 0
-    var y2 = MAP_MARGIN.bottom;
-    var latLng1 = new L.LatLng(y1, x1);
-    var latLng2 = new L.LatLng(y2, x2);
-    var pt1 = canvas.base.latLngToLayerPoint(latLng1);
-    var pt2 = canvas.base.latLngToLayerPoint(latLng2);
-
-    margin.left = pt2.x - pt1.x;
-    margin.bottom = pt1.y - pt2.y;
-
-    x1 = 0
-    x2 = MAP_MARGIN.right;
-    y1 = 0
-    y2 = MAP_MARGIN.top;
-    latLng1 = new L.LatLng(y1, x1);
-    latLng2 = new L.LatLng(y2, x2);
-
-    pt1 = canvas.base.latLngToLayerPoint(latLng1);
-    pt2 = canvas.base.latLngToLayerPoint(latLng2);
-
-    margin.right = pt2.x - pt1.x;
-    margin.top = pt1.y - pt2.y;
-
-    return margin;
-    
- 
-   
-
-  }
-
-  function getCenter() {
-      var y = MAP_CENTER.horiz;
-      var x = MAP_CENTER.vert;
-      var latLng = new L.LatLng(y, x);
-      var pt = canvas.base.latLngToLayerPoint(latLng);
-      var cntr = { x: pt.x, y: pt.y };
-      //console.log(cntr)
-      return cntr;
-  }
-
-  function getNorthWest() {
-      var y = MAP_WIDTH;
-      var x = 0;
-      var latLng = new L.LatLng(y, x);
-      var pt = canvas.base.latLngToLayerPoint(latLng);
-      var nw = { x: pt.x, y: pt.y };
-      //console.log(nw)
-      return nw;
-  }
-
-  function getSouthWest() {
-      var y = 0;
-      var x = 0;
-      var latLng = new L.LatLng(y, x);
-      var pt = canvas.base.latLngToLayerPoint(latLng);
-      var sw = { x: pt.x, y: pt.y };
-      //console.log(sw)
-      return sw;
-  }
-
-  function getSouthEast() {
-      var y = 0;
-      var x = MAP_WIDTH;
-      var latLng = new L.LatLng(y, x);
-      var pt = canvas.base.latLngToLayerPoint(latLng);
-      var se = { x: pt.x, y: pt.y };
-      //console.log(se)
-      return se;
-  }
-
-  function getNorthEast() {
-      var y = MAP_HEIGHT;
-      var x = MAP_WIDTH;
-      var latLng = new L.LatLng(y, x);
-      var pt = canvas.base.latLngToLayerPoint(latLng);
-      var ne = { x: pt.x, y: pt.y };
-      //console.log(ne)
-      return ne;
-  }
+//  canvas.base.on("zoomend", zoomEnd);
 
   function zoomEnd() {
-    //alert(canvas.base.getPixelOrigin())
 
-    scaleNode();
-    console.log("zoom", canvas.base.getZoom());
-    canvas.renderTile();
-    insertTestPoints(canvas);
-    translateNode();
-    translateEdge();
-  } 
+    var zoomLvl = +canvas.base.getZoom();
+    var zoomChg = (zoomLvl - +canvas.zoom)
 
-  canvas.base.setZoom(zoom);
-}
+    var scaleLvl = +canvas.g.attr("transform")
+      .replace("scale(", "")
+      .replace(")", "");
 
+    scaleLvl = scaleLvl += (zoomChg * .4);
 
+    canvas.g
+      .attr("transform", "scale( " + scaleLvl + ")")
+    canvas.zoom = zoomLvl;
+   
+  }
 
+  canvas.g.append("rect")
+    .attr("class", "canvas-back")
+    .attr("fill", "#ffffff")
+    .attr("width",  canvas.dimension().width)
+    .attr("height", canvas.dimension().height)
 
-function insertTestPoints(canvas) {
-  //[y, x]
-  var pointLst = [
-//    [0, 0], [50, 25], [100, 50], [150, 75],
-    [MAP_MARGIN.bottom, MAP_MARGIN.left] ,  //bottom left
-    [MAP_CENTER.horiz, MAP_MARGIN.left] ,  //center left
-    [(MAP_CENTER.horiz) * 2 - MAP_MARGIN.top, MAP_MARGIN.left], //top left
-//    [382, 125],
-//   [1000, 1000]
-  ];
-/*
-  pointLst.forEach( (pt) => {
-    pt = L.latLng(pt);
-    console.log("pt", pt)
-    L.marker(pt).addTo(canvas.base);
+ 
+  canvas.g.append("circle")
+    .attr("class", "canvas-center")
+    .attr("r", 3)
+    .attr("fill-opacity", 0)
+    .attr("cx",  canvas.dimension().width / 2)
+    .attr("cy",  canvas.dimension().height / 2)
+   
+  canvas.edgeG = canvas.g.append("g")
+    .attr("id", "all-edges");
 
-  })
-*/
-  var points = canvas.g.selectAll(".point")
-    .data(pointLst);
+  canvas.nodeG = canvas.g.append("g")
+    .attr("id", "all-nodes");
 
-  var pointsEnter = points.enter()
-    .append("circle")
-    .attr("class", "point")
-    .attr("fill", (d, i) => {if(i == pointLst.length -1) { return "red"; }; return "#aaa"; })
-    .attr("r", 5)
-    .merge(points)
-    .attr("cx", (d, i) => {
-      var x = d[1];
-      var y = d[0];
-      var latLng = new L.LatLng(y, x);
-      return canvas.base.latLngToLayerPoint(latLng).x;
-    })
-    .attr("cy", (d, i) => {
-      var x = d[1];
-      var y = d[0];
-      var latLng = new L.LatLng(y, x);
-      return canvas.base.latLngToLayerPoint(latLng).y;
+  function getDimension() {
+    var width = (+getComputedStyle(this.div.node()).width
+      .replace("px", ""))
 
-    })
+    this.div.style("height", "90%");
 
+    var height = (+getComputedStyle(this.div.node()).height
+      .replace("px", ""))
+
+    return { width: width, height: height };
+  }
+
+  return canvas
 }
 
