@@ -34,7 +34,7 @@ module.exports = (app) => {
       depth: [1, 2, 3, 4, 5], 
       search: ["Depth", "Breadth"],
       user: req.user,
-      history: history,
+      //history: history,
       loginFlag: loginFlag,
       css: [
         "toastr.min.css",

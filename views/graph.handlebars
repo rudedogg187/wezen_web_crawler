@@ -1,14 +1,9 @@
 <div id="content-div" class="row">
   <div id="hist-main" class="hist-col">
-    <div id="hist-head"><b>Crawl History</b></div>
+    <div id="hist-head" style="text-align: center;"><b>Crawl History</b></div><hr>
+    <div id="crawlData">
 
-      {{#each history }}
-
-        <div id="history-url-{{this.idx}}" class="history-url" data-d={{this.data}}>
-          {{this.url}} <small>({{this.steps}} step {{this.type}})</small>
-        </div>
-
-      {{/each}}
+    </div>
   </div>
   <div id="main-col" class="main-col">
     <div class="form-div">

@@ -258,3 +258,21 @@ input, label {
   display: none;
 }
 
+hr {
+    overflow: visible;
+    height: 10px;
+    border-style: solid;
+    border-color: lightGray;
+    border-width: 1px 0 0 0;
+    border-radius: 8px;
+}
+hr:before { 
+    display: block;
+    content: "";
+    height: 10px;
+    margin-top: -11px;
+    border-style: solid;
+    border-color: lightGray;
+    border-width: 0 0 1px 0;
+    border-radius: 8px;
+}
