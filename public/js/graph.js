@@ -136,7 +136,7 @@ function buildTree(data) {
       canvas.dimension().width / 2, canvas.dimension().height / 2
     )
 
-  var forceCollide = d3.forceCollide( radius * 1.1 )
+  var forceCollide = d3.forceCollide( radius * 1.25 )
 
   simulation
     .force("charge_force", forceCharge) 
