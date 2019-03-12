@@ -1,7 +1,6 @@
 var blues = ["#f1eef6", "#d0d1e6", "#a6bddb", "#74a9cf", "#2b8cbe", "#045a8d", "#023858"];
 
 
-
 function nestNode(data, lvl, parentId, tgtNode, lsts) {
   var node = {};
   var edge = {};
@@ -117,7 +116,7 @@ function buildTree(data) {
   var treeData = nestNode(data, 0, null, data[0], { nodes:[], edges:[] });
   console.log(treeData.edges)
 
-  var radius = 40;
+  var radius = 45;
 
   var nodeData = treeData.nodes; 
   var edgeData = treeData.edges;
