@@ -53,16 +53,22 @@ app.use("/auth", authRoutes);
 
 // Enable crawler routes to be written in their own file 
 require('./routes/crawler')(app, cheerio, URL, bodyParser, syncReq, fs, db);
+// Routes used to render pages
 require('./routes/indexRoutes')(app);
+// Routes to manage user accounts
 require('./routes/accounts')(app);
+// Routes to get test data 
 require('./routes/seeds')(app);
 
+
+// 404 Not found 
 app.use((req, res) => {
   res.type('text/plain');
   res.status(404);
   res.send('Oops, that one\'s not found');
 });
 
+// 500 Server error 
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.type('text/plain');

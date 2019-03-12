@@ -1,5 +1,4 @@
 module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
-
   app.get('/crawl/history', (req, res) => {
     if(req.user != null && req.user.userId != null) {
       var path = './logs/' + req.user.userId + '.txt';
@@ -10,13 +9,23 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
         }
         res.json(data);
       }
+      else {
+        var data = [];
+        res.json(data);
+      }
     }
     else {
-      var data = readData('./logs/general.txt');
-      if(data.length > 25) {
-        data = truncateData(data, 25);
+      if(fs.existsSync('./logs/general.txt')) {
+        var data = readData('./logs/general.txt');
+        if(data.length > 25) {
+          data = truncateData(data, 25);
+        }
+        res.json(data);
       }
-      res.json(data);
+      else {
+        var data = [];
+        res.json(data);
+      }
     }
   });
 
@@ -77,7 +86,6 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
       user = req.user;
     }
     else {
-//      req.user = {userId: -1};
       logGeneral(firstUrl, steps, 'Depth');
     }
 

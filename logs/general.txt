@@ -1,0 +1,12 @@
+**
+http://google.com
+1
+Depth
+**
+http://google.com
+3
+Breadth
+**
+http://msn.com
+3
+Breadth
