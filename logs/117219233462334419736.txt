@@ -1,8 +1,4 @@
 **
 http://google.com
-3
+1
 Depth
-**
-http://msn.com
-3
-Breadth

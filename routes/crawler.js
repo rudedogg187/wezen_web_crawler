@@ -130,18 +130,25 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
     collection.push(parentNode); 
     parentNodes.push(parentNode);
     var wordFound = false;
-    while (steps < maxSteps && parentNodes != null && parentNodes.length > 0 && wordFound == false) {
+    var isError = false;
+    while (steps < maxSteps && parentNodes != null && parentNodes.length > 0 && wordFound == false  && isError == false) {
         var returnArray = processParents(idCounter, word, parentNodes, collection);
-        parentNodes = returnArray.newNodes;
-        idCounter = returnArray.idCount;
-        wordFound = returnArray.wordFound;
-        steps++;
+        if(returnArray.isError == true) {
+          isError = true; 
+        }
+        else {
+          wordFound = returnArray.wordFound;
+          parentNodes = returnArray.newNodes;
+          idCounter = returnArray.idCount;
+          steps++;
+        }
     }
     return collection;
   }
 
   function processParents(idCounter, word, parentNodes, collection) {
-    var returnArray = {newNodes: [], wordFound: false, idCount: idCounter}; 
+    var returnArray = {newNodes: [], wordFound: false, idCount: idCounter, isError: false};
+    var errorFlag = false;  
     parentNodes.forEach((parentEach) => {
       try {
         var url = new URL(parentEach.url);
@@ -150,39 +157,44 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
         if(response.statusCode == 200) {
           var body = response.getBody(); 
           var $ = cheerio.load(body);
-          if(word != null && doesWordExist($, word)) {
+          if(doesWordExist($, word)) {
             returnArray.wordFound = true; 
           }
-          var anchorTags = $('a');
-          var currentUrls = [];
-          anchorTags.each(function(index, anchorTag) {
-            if($(anchorTag).attr('href') != undefined) {
-              var urlString = $(anchorTag).attr('href');
-              if(urlString.startsWith('//') || urlString.startsWith('#')) {
+          else {
+            var anchorTags = $('a');
+            var currentUrls = [];
+            anchorTags.each(function(index, anchorTag) {
+              if($(anchorTag).attr('href') != undefined) {
+                var urlString = $(anchorTag).attr('href');
+                if(urlString.startsWith('//') || urlString.startsWith('#')) {
+                }
+                else if(urlString.startsWith('/')) {
+                  urlString = baseurl + urlString;
+                  currentUrls.push(urlString);
+                }
+                else if(urlString.startsWith('http')) {
+                  currentUrls.push(urlString);
+                }
               }
-              else if(urlString.startsWith('/')) {
-                urlString = baseurl + urlString;
-                currentUrls.push(urlString);
-              }
-              else if(urlString.startsWith('http')) {
-                currentUrls.push(urlString);
-              }
-            }
-          });
-          currentUrls.forEach((childUrl) => {
-            parentEach.children.push(idCounter);
-            var newNode = createNode(idCounter++, childUrl);
-            returnArray.idCount++;
-            collection.push(newNode);
-            returnArray.newNodes.push(newNode);
-          });
+            });
+            currentUrls.forEach((childUrl) => {
+              parentEach.children.push(idCounter);
+              var newNode = createNode(idCounter++, childUrl);
+              returnArray.idCount++;
+              collection.push(newNode);
+              returnArray.newNodes.push(newNode);
+            });
+          }
         }
       }
       catch (ex){
-        console.log(ex);
+        errorFlag = true; 
       }
 
     });
+    if(errorFlag == true) {
+      returnArray.isError = true; 
+    }
     return returnArray;
   } 
 
@@ -191,7 +203,8 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
     var idCounter = 1; 
     var steps = 0;
     var currentUrls = []; 
-    while(steps < maxSteps) {
+    var wordFound = false;
+    while(steps <= maxSteps && wordFound != true) {
       var url = new URL(pageToCrawl);
       var baseurl = url.protocol + "//" + url.hostname;
       var response = syncReq('GET', pageToCrawl);
@@ -204,8 +217,7 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
         var newNode = createNode(idCounter++, pageToCrawl);
         collection.push(newNode); 
         var $ = cheerio.load(response.getBody());
-        var wordFound = false;
-        if(word != null && doesWordExist($, word)) {
+        if(doesWordExist($, word)) {
           wordFound = true;
         }
         var anchorTags = $('a');
@@ -242,7 +254,7 @@ module.exports = (app, cheerio, URL, bodyParser, syncReq, fs, db) => {
   function doesWordExist($, word) {
     var text = $('html > body').text().toLowerCase(); 
     word = word.toLowerCase(); 
-    var exists = text.indexOf(word) !== -1; 
+    var exists = text.indexOf(word) !== -1 && word != null && word != '';
     return exists;
   }
 
